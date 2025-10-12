@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Interattiva - Congresso di Vienna</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: #495057;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #f5576c;
+            border-bottom: 3px solid #f5576c;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .mappa-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .box.rosso {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .box.verde {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .box.giallo {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #333;
+        }
+        
+        .box.arancione {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%);
+        }
+        
+        .box.azzurro {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+        }
+        
+        .box.viola {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            color: #333;
+        }
+        
+        .box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .box-icon {
+            font-size: 1.8em;
+        }
+        
+        .box-content {
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        
+        .box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .box li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .box li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .dettagli {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            font-size: 0.95em;
+        }
+        
+        .dettagli.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+        
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .question {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .question h3 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-date {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+            margin-right: 20px;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .legend {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .legend h4 {
+            color: #f5576c;
+            margin-bottom: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .mappa-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ IL CONGRESSO DI VIENNA E LA RESTAURAZIONE</h1>
+            <p>Mappa Interattiva per il Ripasso - Clicca sulle caselle per approfondire!</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'mappa')">📚 Mappa Concettuale</button>
+            <button class="tab" onclick="openTab(event, 'cronologia')">📅 Cronologia</button>
+            <button class="tab" onclick="openTab(event, 'quiz')">🎯 Test Interattivo</button>
+        </div>
+        
+        <div class="content">
+            <!-- TAB MAPPA -->
+            <div id="mappa" class="tab-content active">
+                <div class="legend">
+                    <h4>📖 Legenda Colori</h4>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                        <span><strong>Rosa:</strong> Congresso e Principi Fondamentali</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        <span><strong>Azzurro:</strong> Cambiamenti Territoriali</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);"></div>
+                        <span><strong>Arancio chiaro:</strong> Italia e Alleanze</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                        <span><strong>Viola:</strong> Idee e Movimenti Culturali</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a00 100%);"></div>
+                        <span><strong>Arancio scuro:</strong> Opposizione e Società Segrete</span>
+                    </div>
+                </div>
+                
+                <div class="mappa-container">
+                    <div class="box rosso" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🏛️</span> CONGRESSO DI VIENNA</h3>
+                        <div class="box-content">
+                            <strong>📅 Quando:</strong> Novembre 1814 - Giugno 1815<br>
+                            <strong>👤 Chi lo guidò:</strong> Principe Metternich (Austria)<br>
+                            <strong>🎯 Obiettivo:</strong> Restaurare l'Ancien Régime
+                        </div>
+                        <div class="dettagli">
+                            <strong>Dettagli:</strong><br>
+                            Dopo la sconfitta di Napoleone, le potenze europee si riunirono per riorganizzare l'Europa e cancellare gli effetti della Rivoluzione francese.
+                        </div>
+                    </div>
+                    
+                    <div class="box rosso" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">⚖️</span> PRINCIPIO DI LEGITTIMITÀ</h3>
+                        <div class="box-content">
+                            I sovrani deposti hanno diritto di tornare al trono perché il loro potere viene da Dio
+                        </div>
+                        <div class="dettagli">
+                            <strong>Conseguenze:</strong><br>
+                            • Borbone tornano in Francia (Luigi XVIII)<br>
+                            • Borbone in Spagna<br>
+                            • Borbone nel Regno delle Due Sicilie<br>
+                            • Savoia nel Regno di Sardegna
+                        </div>
+                    </div>
+                    
+                    <div class="box rosso" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🤝</span> PRINCIPIO DI EQUILIBRIO</h3>
+                        <div class="box-content">
+                            Nessuno Stato deve diventare troppo potente per evitare nuove guerre
+                        </div>
+                        <div class="dettagli">
+                            <strong>Come fu applicato:</strong><br>
+                            • Francia ridimensionata<br>
+                            • Stati-cuscinetto ai confini francesi<br>
+                            • Bilanciamento tra le grandi potenze<br>
+                            • Controllo reciproco
+                        </div>
+                    </div>
+                    
+                    <div class="box verde" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🗺️</span> LA FRANCIA</h3>
+                        <div class="box-content">
+                            <strong>❌ Perde:</strong> Territori conquistati, colonie<br>
+                            <strong>🛡️ Stati-cuscinetto:</strong> Paesi Bassi, Svizzera, Regno di Sardegna
+                        </div>
+                        <div class="dettagli">
+                            <strong>Confini:</strong> Ritorna ai confini del 1792<br>
+                            <strong>Obiettivo:</strong> Impedire nuove espansioni francesi
+                        </div>
+                    </div>
+                    
+                    <div class="box verde" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">👑</span> L'AUSTRIA</h3>
+                        <div class="box-content">
+                            <strong>✅ Guadagna:</strong><br>
+                            • Lombardia e Veneto (Lombardo-Veneto)<br>
+                            • Istria e Dalmazia<br>
+                            • Presidenza Confederazione Germanica
+                        </div>
+                        <div class="dettagli">
+                            <strong>Potenza dominante in Italia!</strong><br>
+                            Controllo diretto al Nord e influenza indiretta sui ducati.
+                        </div>
+                    </div>
+                    
+                    <div class="box verde" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🌍</span> ALTRE POTENZE</h3>
+                        <div class="box-content">
+                            <strong>🇷🇺 Russia:</strong> Finlandia + 1/3 Polonia<br>
+                            <strong>🇬🇧 Gran Bretagna:</strong> Dominio sui mari, colonie<br>
+                            <strong>🇩🇪 Prussia:</strong> Parte di Polonia
+                        </div>
+                        <div class="dettagli">
+                            <strong>❌ Polonia:</strong> Completamente smembrata e spartita tra Russia, Prussia e Austria. Sparisce dalla carta geografica!
+                        </div>
+                    </div>
+                    
+                    <div class="box giallo" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🇮🇹</span> L'ITALIA - NORD</h3>
+                        <div class="box-content">
+                            <strong>🔴 Lombardo-Veneto:</strong> Controllo austriaco diretto<br>
+                            <strong>🔵 Regno di Sardegna:</strong> Savoia + Genova<br>
+                            <strong>🟡 Ducati:</strong> Toscana, Parma, Modena (filo-austriaci)
+                        </div>
+                        <div class="dettagli">
+                            L'Austria domina tutta l'Italia settentrionale direttamente o attraverso sovrani a lei legati.
+                        </div>
+                    </div>
+                    
+                    <div class="box giallo" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">⛪</span> L'ITALIA - CENTRO E SUD</h3>
+                        <div class="box-content">
+                            <strong>⛪ Stato della Chiesa:</strong> Restaurato (Emilia, Romagna, Marche, Umbria, Lazio)<br>
+                            <strong>👑 Regno Due Sicilie:</strong> Borbone (Napoli + Sicilia)
+                        </div>
+                        <div class="dettagli">
+                            L'Italia risulta completamente frammentata e sotto influenza straniera (principalmente austriaca).
+                        </div>
+                    </div>
+                    
+                    <div class="box azzurro" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🛡️</span> SANTA ALLEANZA</h3>
+                        <div class="box-content">
+                            <strong>Chi:</strong> Austria (cattolica), Prussia (protestante), Russia (ortodossa)<br>
+                            <strong>Scopo:</strong> Intervento militare contro minacce ai sovrani
+                        </div>
+                        <div class="dettagli">
+                            <strong>Funzione:</strong> Reprimere rivolte e movimenti che minacciano le decisioni di Vienna. È lo strumento militare della Restaurazione.
+                        </div>
+                    </div>
+                    
+                    <div class="box" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">💡</span> LIBERALISMO</h3>
+                        <div class="box-content">
+                            <strong>Principio:</strong> Libertà individuale > autorità<br>
+                            <strong>Diritti:</strong> Pensiero, associazione, proprietà
+                        </div>
+                        <div class="dettagli">
+                            <strong>Due correnti:</strong><br>
+                            • <strong>Moderati:</strong> Monarchia costituzionale, voto limitato<br>
+                            • <strong>Democratici:</strong> Repubblica, suffragio universale maschile<br>
+                            <strong>Economia:</strong> Liberismo = libero mercato
+                        </div>
+                    </div>
+                    
+                    <div class="box" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🎨</span> ROMANTICISMO</h3>
+                        <div class="box-content">
+                            <strong>Valori:</strong> Sentimento, passione, tradizioni popolari<br>
+                            <strong>VS Illuminismo:</strong> Emozione > Ragione
+                        </div>
+                        <div class="dettagli">
+                            <strong>Origine:</strong> Germania (Goethe, Schiller)<br>
+                            <strong>Contributo:</strong> Idea di NAZIONE e PATRIA<br>
+                            <strong>Rivalutazione:</strong> Medioevo come origine dei popoli europei
+                        </div>
+                    </div>
+                    
+                    <div class="box viola" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🏴</span> IDEA DI NAZIONE</h3>
+                        <div class="box-content">
+                            <strong>Nazione:</strong> Popolo con stessa lingua, cultura, storia, religione<br>
+                            <strong>Diritto:</strong> Vivere in uno Stato indipendente
+                        </div>
+                        <div class="dettagli">
+                            <strong>Dove si diffonde:</strong> Paesi sotto dominio straniero<br>
+                            • Italia (sotto Austria)<br>
+                            • Polonia (smembrata)<br>
+                            • Grecia (sotto Ottomani)<br>
+                            <strong>Patria:</strong> "Terra dei padri" = territorio nazionale
+                        </div>
+                    </div>
+                    
+                    <div class="box arancione" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">🤫</span> SOCIETÀ SEGRETE</h3>
+                        <div class="box-content">
+                            <strong>Perché:</strong> Censura e repressione<br>
+                            <strong>🇮🇹 Carboneria:</strong> La più importante in Italia<br>
+                            <strong>Altri:</strong> Eteria (Grecia), Società dei giovani (Germania)
+                        </div>
+                        <div class="dettagli">
+                            <strong>Obiettivi:</strong><br>
+                            • Costituzioni<br>
+                            • Libertà civili e politiche<br>
+                            • Indipendenza nazionale<br>
+                            <strong>Organizzazione:</strong> Gerarchica e segreta per sfuggire alla polizia
+                        </div>
+                    </div>
+                    
+                    <div class="box arancione" onclick="toggleDettagli(this)">
+                        <h3><span class="box-icon">⚠️</span> LIMITI DELLA RESTAURAZIONE</h3>
+                        <div class="box-content">
+                            <strong>✅ Risultato:</strong> 30 anni di pace<br>
+                            <strong>❌ Problemi:</strong> Equilibrio precario
+                        </div>
+                        <div class="dettagli">
+                            <strong>Delusioni popolari:</strong><br>
+                            • Popoli ignorati nelle decisioni<br>
+                            • Stati uniti forzatamente (Belgio + Olanda)<br>
+                            • Stati cancellati (Polonia)<br>
+                            • Ritorno all'assolutismo<br>
+                            • Abolizione libertà conquistate<br>
+                            <strong>Conseguenza:</strong> Tensioni che porteranno ai moti rivoluzionari
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB CRONOLOGIA -->
+            <div id="cronologia" class="tab-content">
+                <h2 style="color: #f5576c; margin-bottom: 30px;">📅 Linea del Tempo</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">1814</div>
+                        <div class="timeline-content">
+                            <h3>🏛️ Inizio Congresso di Vienna</h3>
+                            <p>Novembre: Le potenze europee si riuniscono a Vienna dopo la sconfitta di Napoleone</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">1815</div>
+                        <div class="timeline-content">
+                            <h3>✅ Fine del Congresso</h3>
+                            <p>Giugno: Vengono ridisegnati i confini europei. Inizia l'età della Restaurazione</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">1815</div>
+                        <div class="timeline-content">
+                            <h3>🤝 Nasce la Santa Alleanza</h3>
+                            <p>Austria, Prussia e Russia formano un'alleanza militare per difendere l'ordine di Vienna</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">1815-1830</div>
+                        <div class="timeline-content">
+                            <h3>📚 Diffusione di Liberalismo e Romanticismo</h3>
+                            <p>Si diffondono le idee liberali e l'idea di nazione. Nascono le società segrete come la Carboneria</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">1820-1848</div>
+                        <div class="timeline-content">
+                            <h3>🔥 Moti Rivoluzionari</h3>
+                            <p>Le tensioni accumulate esplodono in una serie di rivolte in tutta Europa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TAB QUIZ -->
+            <div id="quiz" class="tab-content">
+                <h2 style="color: #f5576c; margin-bottom: 20px;">🎯 Test Interattivo di Verifica</h2>
+                <p style="margin-bottom: 30px; font-size: 1.1em;">Rispondi alle domande per verificare la tua preparazione!</p>
+                
+                <div class="quiz-container" id="quizContainer">
+                    <!-- Le domande verranno generate da JavaScript -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="verificaRisposte()">📊 Verifica Risposte</button>
+                    <button class="btn" onclick="resetQuiz()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); margin-left: 10px;">🔄 Ricomincia</button>
+                </div>
+                
+                <div id="scoreDisplay" class="score" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Gestione tabs
+        function openTab(evt, tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            evt.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // Toggle dettagli nelle box
+        function toggleDettagli(element) {
+            const dettagli = element.querySelector('.dettagli');
+            dettagli.classList.toggle('show');
+        }
+        
+        // Quiz interattivo
+        const domande = [
+            {
+                domanda: "In che anno si svolse il Congresso di Vienna?",
+                opzioni: ["1789", "1815", "1848", "1861"],
+                corretta: 1
+            },
+            {
+                domanda: "Chi guidò i lavori del Congresso di Vienna?",
+                opzioni: ["Napoleone", "Metternich", "Mazzini", "Cavour"],
+                corretta: 1
+            },
+            {
+                domanda: "Quale principio stabiliva che i sovrani deposti potevano tornare al trono?",
+                opzioni: ["Equilibrio", "Nazionalità", "Legittimità", "Libertà"],
+                corretta: 2
+            },
+            {
+                domanda: "Quale regno italiano era sotto controllo diretto austriaco?",
+                opzioni: ["Regno di Sardegna", "Lombardo-Veneto", "Due Sicilie", "Stato della Chiesa"],
+                corretta: 1
+            },
+            {
+                domanda: "Quale dinastia tornò a regnare in Francia?",
+                opzioni: ["Savoia", "Asburgo", "Borbone", "Braganza"],
+                corretta: 2
+            },
+            {
+                domanda: "Quali Stati formarono la Santa Alleanza?",
+                opzioni: ["Francia, Inghilterra, Spagna", "Austria, Prussia, Russia", "Italia, Germania, Francia", "Spagna, Portogallo, Austria"],
+                corretta: 1
+            },
+            {
+                domanda: "Cosa promuoveva il liberalismo?",
+                opzioni: ["L'assolutismo", "La libertà individuale", "Il dominio straniero", "La censura"],
+                corretta: 1
+            },
+            {
+                domanda: "Qual era la principale società segreta italiana?",
+                opzioni: ["Massoneria", "Carboneria", "Eteria", "Giovine Italia"],
+                corretta: 1
+            },
+            {
+                domanda: "Cosa successe alla Polonia dopo il Congresso di Vienna?",
+                opzioni: ["Diventò indipendente", "Fu unita alla Francia", "Fu smembrata", "Si alleò con l'Austria"],
+                corretta: 2
+            },
+            {
+                domanda: "Cosa significa 'nazione' secondo il Romanticismo?",
+                opzioni: ["Un esercito forte", "Un popolo con stessa lingua e cultura", "Un territorio grande", "Una religione"],
+                corretta: 1
+            }
+        ];
+        
+        let risposteUtente = [];
+        
+        function caricaQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+            risposteUtente = [];
+            
+            domande.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <h3>Domanda ${index + 1}</h3>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">${q.domanda}</p>
+                    <div class="options" id="options${index}">
+                        ${q.opzioni.map((opt, i) => `
+                            <div class="option" onclick="selezionaRisposta(${index}, ${i})">
+                                ${String.fromCharCode(65 + i)}) ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+                risposteUtente.push(null);
+            });
+        }
+        
+        function selezionaRisposta(domandaIndex, opzioneIndex) {
+            const options = document.querySelectorAll(`#options${domandaIndex} .option`);
+            options.forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e9ecef';
+            });
+            
+            options[opzioneIndex].style.background = '#e7f3ff';
+            options[opzioneIndex].style.borderColor = '#667eea';
+            
+            risposteUtente[domandaIndex] = opzioneIndex;
+        }
+        
+        function verificaRisposte() {
+            let punteggio = 0;
+            
+            domande.forEach((q, index) => {
+                const options = document.querySelectorAll(`#options${index} .option`);
+                
+                options.forEach((opt, i) => {
+                    opt.classList.add('disabled');
+                    if (i === q.corretta) {
+                        opt.classList.add('correct');
+                        opt.innerHTML += ' ✓ CORRETTO';
+                    }
+                    if (risposteUtente[index] === i && i !== q.corretta) {
+                        opt.classList.add('incorrect');
+                        opt.innerHTML += ' ✗ SBAGLIATO';
+                    }
+                });
+                
+                if (risposteUtente[index] === q.corretta) {
+                    punteggio++;
+                }
+            });
+            
+            const scoreDiv = document.getElementById('scoreDisplay');
+            const percentuale = Math.round((punteggio / domande.length) * 100);
+            let messaggio = '';
+            
+            if (percentuale >= 90) {
+                messaggio = '🌟 ECCELLENTE! Sei molto preparato!';
+            } else if (percentuale >= 70) {
+                messaggio = '👍 BRAVO! Buona preparazione!';
+            } else if (percentuale >= 60) {
+                messaggio = '📚 SUFFICIENTE! Ripassa ancora un po\'!';
+            } else {
+                messaggio = '📖 STUDIA ANCORA! Devi ripassare meglio!';
+            }
+            
+            scoreDiv.innerHTML = `
+                <div style="font-size: 2em; margin-bottom: 10px;">
+                    Punteggio: ${punteggio}/${domande.length}
+                </div>
+                <div style="font-size: 1.3em; color: #667eea;">
+                    ${percentuale}%
+                </div>
+                <div style="font-size: 1.1em; margin-top: 10px;">
+                    ${messaggio}
+                </div>
+            `;
+            scoreDiv.style.display = 'block';
+            
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+        
+        function resetQuiz() {
+            caricaQuiz();
+            document.getElementById('scoreDisplay').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Carica il quiz all'avvio
+        window.addEventListener('DOMContentLoaded', function() {
+            caricaQuiz();
+        });
+    </script>
