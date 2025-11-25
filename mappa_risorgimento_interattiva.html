@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Risorgimento Italiano</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c5f2d 0%, #97bc62 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #009246 0%, #ce2b37 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+        
+        .timeline {
+            padding: 40px;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .timeline-header h2 {
+            font-size: 2.5em;
+            color: #009246;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #009246, #ce2b37);
+        }
+        
+        .timeline-item {
+            margin-bottom: 50px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .timeline-item.left {
+            flex-direction: row;
+        }
+        
+        .timeline-item.right {
+            flex-direction: row-reverse;
+        }
+        
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .timeline-content.guerra {
+            border-color: #ce2b37;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+        }
+        
+        .timeline-content.politica {
+            border-color: #009246;
+            background: linear-gradient(135deg, #f0fff0 0%, #e8ffe8 100%);
+        }
+        
+        .timeline-content.unificazione {
+            border-color: #ffa500;
+            background: linear-gradient(135deg, #fffaf0 0%, #ffedd4 100%);
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid;
+            z-index: 10;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .guerra .timeline-dot {
+            border-color: #ce2b37;
+        }
+        
+        .politica .timeline-dot {
+            border-color: #009246;
+        }
+        
+        .unificazione .timeline-dot {
+            border-color: #ffa500;
+        }
+        
+        .event-date {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .event-title {
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .event-icon {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+        
+        .event-preview {
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        
+        .protagonisti {
+            margin-top: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .protagonisti h3 {
+            font-size: 1.8em;
+            color: #009246;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .protagonisti-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .protagonista-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ce2b37;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .protagonista-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .protagonista-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .protagonista-role {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #7f8c8d;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #ce2b37;
+        }
+        
+        .modal-title {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+        }
+        
+        .modal-content.guerra .modal-title {
+            border-color: #ce2b37;
+        }
+        
+        .modal-content.politica .modal-title {
+            border-color: #009246;
+        }
+        
+        .modal-content.unificazione .modal-title {
+            border-color: #ffa500;
+        }
+        
+        .modal-text {
+            line-height: 1.9;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+        
+        .modal-text h3 {
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: 1.4em;
+        }
+        
+        .modal-text ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+        
+        .modal-text li {
+            margin: 8px 0;
+        }
+        
+        .modal-text strong {
+            color: #009246;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                flex-direction: column !important;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px;
+            }
+            
+            .timeline-dot {
+                left: 30px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇮🇹 Il Risorgimento Italiano</h1>
+            <p class="subtitle">Dal 1848 all'Unità d'Italia - Clicca sugli eventi per scoprire di più</p>
+        </header>
+        
+        <div class="timeline">
+            <div class="timeline-header">
+                <h2>⏳ Cronologia degli Eventi</h2>
+            </div>
+            
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content guerra" onclick="openModal('prima_guerra')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 23 Marzo 1848</div>
+                        <div class="event-title"><span class="event-icon">⚔️</span>Prima Guerra d'Indipendenza</div>
+                        <p class="event-preview">Carlo Alberto dichiara guerra all'Austria per sostenere le rivolte nel Lombardo-Veneto...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content guerra" onclick="openModal('custoza')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 Luglio 1848</div>
+                        <div class="event-title"><span class="event-icon">❌</span>Sconfitta di Custoza</div>
+                        <p class="event-preview">I Piemontesi sono sconfitti dal maresciallo Radetzky...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content politica" onclick="openModal('repubblica_romana')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 Febbraio 1849</div>
+                        <div class="event-title"><span class="event-icon">🏛️</span>Repubblica Romana</div>
+                        <p class="event-preview">Proclamata la Repubblica, governata da Mazzini, Armellini e Saffi...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content guerra" onclick="openModal('novara')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 23 Marzo 1849</div>
+                        <div class="event-title"><span class="event-icon">⚔️</span>Novara e l'Abdicazione</div>
+                        <p class="event-preview">Carlo Alberto sconfitto a Novara abdica in favore di Vittorio Emanuele II...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content politica" onclick="openModal('cavour')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 1850-1861</div>
+                        <div class="event-title"><span class="event-icon">👔</span>Le Riforme di Cavour</div>
+                        <p class="event-preview">Cavour trasforma il Piemonte nello Stato più progredito d'Italia...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content guerra" onclick="openModal('seconda_guerra')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 26 Aprile 1859</div>
+                        <div class="event-title"><span class="event-icon">⚔️</span>Seconda Guerra d'Indipendenza</div>
+                        <p class="event-preview">L'Austria dichiara guerra, Francia aiuta il Piemonte...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content unificazione" onclick="openModal('mille')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 5 Maggio 1860</div>
+                        <div class="event-title"><span class="event-icon">🚢</span>Spedizione dei Mille</div>
+                        <p class="event-preview">Garibaldi e i Mille in camicia rossa salpano da Quarto...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content unificazione" onclick="openModal('teano')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 26 Ottobre 1860</div>
+                        <div class="event-title"><span class="event-icon">🤝</span>Incontro di Teano</div>
+                        <p class="event-preview">Garibaldi consegna le terre conquistate a Vittorio Emanuele II...</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content unificazione" onclick="openModal('regno')">
+                        <div class="timeline-dot"></div>
+                        <div class="event-date">📅 17 Marzo 1861</div>
+                        <div class="event-title"><span class="event-icon">👑</span>Nasce il Regno d'Italia</div>
+                        <p class="event-preview">Vittorio Emanuele II proclamato primo re d'Italia!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="protagonisti">
+            <h3>🎭 I Protagonisti del Risorgimento</h3>
+            <div class="protagonisti-grid">
+                <div class="protagonista-card" onclick="openModal('carlo_alberto')">
+                    <div class="protagonista-name">👑 Carlo Alberto</div>
+                    <div class="protagonista-role">Re di Sardegna</div>
+                </div>
+                <div class="protagonista-card" onclick="openModal('vittorio_emanuele')">
+                    <div class="protagonista-name">👑 Vittorio Emanuele II</div>
+                    <div class="protagonista-role">Primo Re d'Italia</div>
+                </div>
+                <div class="protagonista-card" onclick="openModal('cavour_hero')">
+                    <div class="protagonista-name">👔 Camillo Benso di Cavour</div>
+                    <div class="protagonista-role">Politico e Statista</div>
+                </div>
+                <div class="protagonista-card" onclick="openModal('garibaldi_hero')">
+                    <div class="protagonista-name">⚔️ Giuseppe Garibaldi</div>
+                    <div class="protagonista-role">Eroe dei Due Mondi</div>
+                </div>
+                <div class="protagonista-card" onclick="openModal('mazzini_hero')">
+                    <div class="protagonista-name">🏛️ Giuseppe Mazzini</div>
+                    <div class="protagonista-role">Patriota Repubblicano</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    
+    <script>
+        const events = {
+            prima_guerra: {
+                title: "⚔️ Prima Guerra d'Indipendenza (1848)",
+                content: `<p>Il 23 marzo 1848 Carlo Alberto dichiara guerra all'Austria per sostenere le rivolte nel Lombardo-Veneto.</p>
+                    <h3>Prime vittorie</h3>
+                    <ul><li>Peschiera, Pastrengo, Curtatone, Montanara e Goito</li>
+                    <li>Diversi Stati italiani inviano truppe in aiuto</li></ul>
+                    <h3>Il capovolgimento</h3>
+                    <p>Gli altri sovrani, temendo che il Regno di Sardegna diventi troppo potente, ritirano le truppe.</p>`,
+                class: 'guerra'
+            },
+            custoza: {
+                title: "❌ Sconfitta di Custoza",
+                content: `<p>Tra il 22 e 27 luglio 1848, i Piemontesi sono sconfitti a Custoza dal maresciallo Radetzky.</p>
+                    <p>L'8 agosto Carlo Alberto accetta l'armistizio e gli Austriaci rientrano a Milano.</p>`,
+                class: 'guerra'
+            },
+            repubblica_romana: {
+                title: "🏛️ Repubblica Romana (1849)",
+                content: `<p>La sconfitta rafforza i democratici e repubblicani. A Roma il papa fugge a Gaeta.</p>
+                    <h3>Il Triumvirato</h3>
+                    <ul><li>Giuseppe Mazzini</li><li>Carlo Armellini</li><li>Aurelio Saffi</li></ul>
+                    <p>Anche in Toscana viene proclamata la repubblica.</p>`,
+                class: 'politica'
+            },
+            novara: {
+                title: "⚔️ Novara e Abdicazione (1849)",
+                content: `<p>Il 23 marzo 1849 Carlo Alberto è definitivamente sconfitto a Novara.</p>
+                    <h3>Conseguenze</h3>
+                    <ul><li>Carlo Alberto abdica in favore di Vittorio Emanuele II</li>
+                    <li>Armistizio dalle condizioni durissime con l'Austria</li>
+                    <li>Cadono i governi rivoluzionari in Toscana e a Roma</li>
+                    <li>La Sicilia torna ai Borboni</li></ul>`,
+                class: 'guerra'
+            },
+            cavour: {
+                title: "👔 Cavour e le Riforme",
+                content: `<p>Camillo Benso conte di Cavour trasforma il Piemonte nello Stato più progredito d'Italia.</p>
+                    <h3>Le riforme</h3>
+                    <ul><li>Fonda la Banca Nazionale</li><li>Apre ai mercati internazionali</li>
+                    <li>Costruisce strade e ferrovie</li><li>Sostiene l'industria</li></ul>
+                    <h3>Politica estera</h3>
+                    <p>Invia truppe in Crimea e partecipa al Congresso di Parigi (1856). Nel 1858 firma con Napoleone III gli accordi di Plombières.</p>`,
+                class: 'politica'
+            },
+            seconda_guerra: {
+                title: "⚔️ Seconda Guerra d'Indipendenza (1859)",
+                content: `<p>Il 26 aprile 1859 l'Austria dichiara guerra al Regno di Sardegna.</p>
+                    <h3>Vittorie decisive</h3>
+                    <ul><li>Truppe franco-piemontesi vincono a Solferino e San Martino</li>
+                    <li>Garibaldi libera parte della Lombardia</li>
+                    <li>Gli Austriaci si ritirano dalla Lombardia</li></ul>
+                    <h3>Annessioni</h3>
+                    <p>Con plebiscito si annettono: Parma, Piacenza, Modena, Toscana, Emilia-Romagna.</p>`,
+                class: 'guerra'
+            },
+            mille: {
+                title: "🚢 Spedizione dei Mille (1860)",
+                content: `<p>Nella notte tra il 5 e 6 maggio 1860, circa mille volontari in camicia rossa guidati da Garibaldi salpano da Quarto.</p>
+                    <h3>Le tappe</h3>
+                    <ul><li>11 maggio: sbarco a Marsala</li>
+                    <li>Vittorie a Calatafimi e Milazzo</li>
+                    <li>6 agosto: passano in Calabria</li>
+                    <li>Entrano a Napoli</li>
+                    <li>Febbraio 1861: Francesco II si arrende</li></ul>`,
+                class: 'unificazione'
+            },
+            teano: {
+                title: "🤝 Incontro di Teano (1860)",
+                content: `<p>Il 26 ottobre 1860 Garibaldi incontra Vittorio Emanuele II a Teano e gli consegna le terre conquistate.</p>
+                    <p>Anche Marche e Umbria votano l'annessione. Mancano solo Veneto, Friuli, Trentino e Lazio.</p>`,
+                class: 'unificazione'
+            },
+            regno: {
+                title: "👑 Regno d'Italia (1861)",
+                content: `<p>Il 17 marzo 1861 il primo Parlamento nazionale, riunito a Torino, proclama Vittorio Emanuele II re d'Italia.</p>
+                    <h3>L'Italia è unita!</h3>
+                    <p>Nonostante il fallimento dei moti del 1848-49, il sentimento nazionale si è diffuso. L'unificazione è compiuta.</p>`,
+                class: 'unificazione'
+            },
+            carlo_alberto: {
+                title: "👑 Carlo Alberto di Savoia",
+                content: `<p>Re di Sardegna che guida la Prima Guerra d'Indipendenza.</p>
+                    <p>Dopo la sconfitta di Novara (1849) abdica in favore del figlio Vittorio Emanuele II.</p>`,
+                class: 'politica'
+            },
+            vittorio_emanuele: {
+                title: "👑 Vittorio Emanuele II",
+                content: `<p>Diventa re dopo l'abdicazione del padre Carlo Alberto.</p>
+                    <p>Il 17 marzo 1861 viene proclamato primo Re d'Italia.</p>`,
+                class: 'unificazione'
+            },
+            cavour_hero: {
+                title: "👔 Camillo Benso di Cavour",
+                content: `<p>Politico piemontese liberale con ruolo fondamentale nel Risorgimento.</p>
+                    <p>Modernizza il Piemonte e con abili mosse diplomatiche prepara l'unificazione italiana.</p>`,
+                class: 'politica'
+            },
+            garibaldi_hero: {
+                title: "⚔️ Giuseppe Garibaldi",
+                content: `<p>Eroe dei Due Mondi, guida i Cacciatori delle Alpi e la Spedizione dei Mille.</p>
+                    <p>Conquista il Regno delle Due Sicilie e lo consegna a Vittorio Emanuele II.</p>`,
+                class: 'unificazione'
+            },
+            mazzini_hero: {
+                title: "🏛️ Giuseppe Mazzini",
+                content: `<p>Patriota e repubblicano, membro del triumvirato della Repubblica Romana (1849).</p>
+                    <p>Ispira i movimenti democratici e repubblicani del Risorgimento.</p>`,
+                class: 'politica'
+            }
+        };
+        
+        function openModal(key) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            const event = events[key];
+            
+            modalBody.innerHTML = `<h2 class="modal-title">${event.title}</h2><div class="modal-text">${event.content}</div>`;
+            
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.className = 'modal-content ' + event.class;
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal(e) {
+            const modal = document.getElementById('modal');
+            if (!e || e.target === modal) {
+                modal.classList.remove('active');
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
