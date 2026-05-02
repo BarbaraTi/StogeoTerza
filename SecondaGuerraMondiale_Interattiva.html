@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Seconda Guerra Mondiale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+
+  :root {
+    --bg: #faf8f3;
+    --bg2: #ffffff;
+    --border: #d4c9b0;
+    --text: #1a1a1a;
+    --text2: #444444;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --gold: #b5700a;
+    --gold-bg: #fef6e4;
+    --teal: #0e6b5e;
+    --teal-bg: #e2f4f1;
+    --green: #1a6b2e;
+    --green-bg: #e8f5ec;
+    --purple: #5b3d9e;
+    --purple-bg: #f0ebfb;
+    --blue: #1a4f8a;
+    --blue-bg: #e8f0fb;
+    --nav-active: #1a4f8a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1.7;
+  }
+
+  header {
+    background: #1a4f8a;
+    color: white;
+    padding: 24px 28px 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  header p {
+    font-size: 1rem;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    border-bottom: 3px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0 12px;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    border-bottom: 4px solid transparent;
+    color: var(--text2);
+    padding: 16px 18px;
+    font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  nav button:hover { color: var(--nav-active); background: #f0f4ff; }
+  nav button.active { color: var(--nav-active); border-bottom-color: var(--nav-active); }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+
+  /* MAPPA TEMATICA */
+  .map-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 620px) {
+    .map-grid { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.3rem; }
+    nav button { font-size: 0.9rem; padding: 13px 12px; }
+  }
+
+  .topic-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    border-left-width: 7px;
+  }
+
+  .topic-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .topic-card:focus { outline: 3px solid var(--nav-active); }
+
+  .topic-card.red    { border-left-color: var(--red); }
+  .topic-card.gold   { border-left-color: var(--gold); }
+  .topic-card.teal   { border-left-color: var(--teal); }
+  .topic-card.green  { border-left-color: var(--green); }
+  .topic-card.purple { border-left-color: var(--purple); }
+  .topic-card.blue   { border-left-color: var(--blue); }
+
+  .topic-card .date {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+  }
+
+  .topic-card.red    .date { color: var(--red); }
+  .topic-card.gold   .date { color: var(--gold); }
+  .topic-card.teal   .date { color: var(--teal); }
+  .topic-card.green  .date { color: var(--green); }
+  .topic-card.purple .date { color: var(--purple); }
+  .topic-card.blue   .date { color: var(--blue); }
+
+  .topic-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .topic-card > p {
+    font-size: 1rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .expand-hint {
+    font-size: 0.85rem;
+    color: var(--nav-active);
+    margin-top: 10px;
+    font-weight: 700;
+  }
+
+  .extra {
+    display: none;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .topic-card.red    .extra { background: var(--red-bg); }
+  .topic-card.gold   .extra { background: var(--gold-bg); }
+  .topic-card.teal   .extra { background: var(--teal-bg); }
+  .topic-card.green  .extra { background: var(--green-bg); }
+  .topic-card.purple .extra { background: var(--purple-bg); }
+  .topic-card.blue   .extra { background: var(--blue-bg); }
+
+  /* TIMELINE */
+  .timeline { padding-left: 36px; position: relative; }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--red), var(--teal));
+    border-radius: 4px;
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 24px;
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 20px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--bg);
+  }
+
+  .tl-item.red::before    { background: var(--red); }
+  .tl-item.gold::before   { background: var(--gold); }
+  .tl-item.teal::before   { background: var(--teal); }
+  .tl-item.green::before  { background: var(--green); }
+  .tl-item.purple::before { background: var(--purple); }
+
+  .tl-year {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+  }
+
+  .tl-item.red    .tl-year { color: var(--red); }
+  .tl-item.gold   .tl-year { color: var(--gold); }
+  .tl-item.teal   .tl-year { color: var(--teal); }
+  .tl-item.green  .tl-year { color: var(--green); }
+  .tl-item.purple .tl-year { color: var(--purple); }
+
+  .tl-item h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .tl-item p {
+    font-size: 1rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* SCHIERAMENTI */
+  .sides-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 620px) { .sides-grid { grid-template-columns: 1fr; } }
+
+  .side-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+  }
+
+  .side-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .side-card.axis h3  { color: var(--red); }
+  .side-card.allied h3 { color: var(--teal); }
+
+  .side-card ul { list-style: none; }
+
+  .side-card li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ece6d8;
+    font-size: 1rem;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+  }
+
+  .side-card li:last-child { border-bottom: none; }
+
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .axis  .dot { background: var(--red); }
+  .allied .dot { background: var(--teal); }
+
+  /* SHOAH */
+  .shoah-banner {
+    background: var(--red-bg);
+    border: 2px solid #e8b4b0;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .shoah-banner h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .shoah-banner p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .shoah-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  @media (max-width: 500px) { .shoah-stats { grid-template-columns: 1fr; } }
+
+  .stat-box {
+    background: white;
+    border: 2px solid #e8b4b0;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-box .num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--red);
+    display: block;
+    line-height: 1.2;
+  }
+
+  .stat-box .lab {
+    font-size: 0.9rem;
+    color: var(--text2);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* GLOSSARIO */
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .gloss-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .gloss-card h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 6px;
+  }
+
+  .gloss-card p {
+    font-size: 1rem;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+
+  /* QUIZ */
+  .quiz-container { max-width: 760px; margin: 0 auto; }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .quiz-progress {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--nav-active);
+  }
+
+  .progress-bar {
+    height: 10px;
+    background: #ddd;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--teal));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+  }
+
+  .question-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 18px;
+  }
+
+  .question-num {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .question-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 12px; }
+
+  .option-btn {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--nav-active);
+    background: var(--blue-bg);
+  }
+
+  .option-btn.correct {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .option-btn.wrong {
+    background: var(--red-bg);
+    border-color: var(--red);
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 18px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    display: none;
+    font-weight: 400;
+  }
+
+  .feedback.show { display: block; }
+
+  .feedback.correct {
+    background: var(--green-bg);
+    border: 2px solid var(--green);
+    color: var(--green);
+  }
+
+  .feedback.wrong {
+    background: var(--red-bg);
+    border: 2px solid var(--red);
+    color: var(--red);
+  }
+
+  .quiz-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .btn {
+    background: var(--nav-active);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    color: white;
+    font-family: 'Atkinson Hyperlegible', Arial, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+
+  .score-box {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    display: none;
+  }
+
+  .score-box.show { display: block; }
+
+  .score-label-top {
+    font-size: 1rem;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .score-number {
+    font-size: 4.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 8px 0;
+  }
+
+  .score-label {
+    font-size: 1.1rem;
+    color: var(--text2);
+    margin-bottom: 20px;
+  }
+
+  .score-message {
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 28px;
+    line-height: 1.7;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* neutral card */
+  .neutral-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+
+  .neutral-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text2);
+    margin-bottom: 10px;
+  }
+
+  .neutral-card p {
+    font-size: 1rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>La Seconda Guerra Mondiale</h1>
+  <p>Mappa interattiva — Scuola Secondaria di Primo Grado</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showSection('mappa', this)">🗺 Mappa</button>
+  <button onclick="showSection('timeline', this)">📅 Cronologia</button>
+  <button onclick="showSection('schieramenti', this)">⚔️ Schieramenti</button>
+  <button onclick="showSection('shoah', this)">✡️ La Shoah</button>
+  <button onclick="showSection('glossario', this)">📖 Glossario</button>
+  <button onclick="showSection('quiz', this)">❓ Verifica</button>
+</nav>
+
+<main>
+
+<!-- MAPPA TEMATICA -->
+<div id="section-mappa" class="section active">
+  <h2 class="section-title">Mappa tematica</h2>
+  <p class="section-sub">Tocca una scheda per aprirla e leggere di più.</p>
+  <div class="map-grid">
+
+    <div class="topic-card red" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔴 1939</div>
+      <h3>L'inizio della guerra</h3>
+      <p>Il 1° settembre 1939 la Germania invade la Polonia. Inizia la Seconda Guerra Mondiale.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Gran Bretagna e Francia dichiarano guerra alla Germania due giorni dopo. La Polonia resiste eroicamente ma viene attaccata anche dall'URSS ad est. In pochi mesi la Germania controlla l'Europa centro-settentrionale.</div>
+    </div>
+
+    <div class="topic-card gold" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🟡 1940 — Fronte Ovest</div>
+      <h3>La Francia cade. La Gran Bretagna resiste.</h3>
+      <p>Hitler entra a Parigi il 14 giugno 1940. Solo Churchill e la RAF tengono testa ai Tedeschi.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">La Francia è divisa in due: il Nord è occupato dai Tedeschi, il Centro-Sud ha un governo collaborazionista guidato da Pétain a Vichy. De Gaulle guida la "Francia Libera" da Londra. I Britannici resistono grazie ai radar, che individuano i bombardieri nemici in avvicinamento.</div>
+    </div>
+
+    <div class="topic-card red" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔴 10 giugno 1940</div>
+      <h3>L'Italia entra in guerra</h3>
+      <p>Mussolini vuole sedersi "al tavolo dei vincitori". I risultati militari italiani sono però deludenti.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">L'attacco al Sud della Francia fallisce. Le offensive in Egitto e Grecia falliscono. I Tedeschi devono intervenire in Africa e conquistare Grecia e Jugoslavia al posto degli Italiani.</div>
+    </div>
+
+    <div class="topic-card teal" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔵 22 giugno 1941</div>
+      <h3>Operazione Barbarossa</h3>
+      <p>Hitler rompe il patto con Stalin e invade l'Unione Sovietica. L'ARMIR italiano combatte al suo fianco.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">I Tedeschi avanzano rapidamente ma il terribile inverno russo e la guerriglia partigiana bloccano l'avanzata. L'ARMIR (Armata Italiana in Russia) subisce enormi perdite durante la ritirata.</div>
+    </div>
+
+    <div class="topic-card gold" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🟡 7 dicembre 1941</div>
+      <h3>Pearl Harbor: gli USA entrano in guerra</h3>
+      <p>Il Giappone bombarda la base americana. Gli Stati Uniti dichiarano guerra e si uniscono agli Alleati.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Da questo momento ci sono due blocchi chiari: l'Asse (Germania, Italia, Giappone) contro gli Alleati (USA, Gran Bretagna, URSS e altri). La guerra diventa mondiale.</div>
+    </div>
+
+    <div class="topic-card green" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🟢 1942–1944</div>
+      <h3>La svolta: l'Asse arretra</h3>
+      <p>El Alamein, Stalingrado, lo sbarco in Sicilia e il D-Day in Normandia cambiano le sorti della guerra.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Mussolini viene arrestato il 25 luglio 1943. L'8 settembre l'Italia firma l'armistizio. Il 6 giugno 1944 (D-Day) oltre 300.000 soldati alleati sbarcano in Normandia.</div>
+    </div>
+
+    <div class="topic-card purple" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🟣 1945</div>
+      <h3>Fine della guerra</h3>
+      <p>25 aprile 1945: resa della Germania. 14 agosto: resa del Giappone dopo le bombe atomiche.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Hitler si suicida. Le bombe atomiche vengono sganciate su Hiroshima (6 agosto) e Nagasaki (9 agosto 1945). Il Giappone si arrende. A novembre iniziano i Processi di Norimberga contro i criminali di guerra nazisti.</div>
+    </div>
+
+    <div class="topic-card blue" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔵 1945–46</div>
+      <h3>I Processi di Norimberga</h3>
+      <p>I gerarchi nazisti vengono processati per crimini di guerra e contro l'umanità. 12 condanne a morte.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Il processo inizia il 20 novembre 1945. La maggior parte degli imputati non mostra pentimento. La sentenza emette 12 condanne a morte, 3 ergastoli e altre condanne tra i 10 e 20 anni.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CRONOLOGIA -->
+<div id="section-timeline" class="section">
+  <h2 class="section-title">Cronologia</h2>
+  <p class="section-sub">Gli eventi principali in ordine di tempo.</p>
+  <div class="timeline">
+    <div class="tl-item red"><div class="tl-year">1 settembre 1939</div><h4>🔴 Invasione della Polonia</h4><p>La Germania attacca la Polonia. Due giorni dopo Gran Bretagna e Francia dichiarano guerra. Inizia la Seconda Guerra Mondiale.</p></div>
+    <div class="tl-item red"><div class="tl-year">10 maggio – 22 giugno 1940</div><h4>🔴 Caduta della Francia</h4><p>Hitler entra a Parigi il 14 giugno. La Francia firma l'armistizio. Nasce il governo collaborazionista di Vichy.</p></div>
+    <div class="tl-item gold"><div class="tl-year">10 giugno 1940</div><h4>🟡 L'Italia entra in guerra</h4><p>Mussolini attacca il Sud della Francia. Le campagne militari italiane falliscono quasi tutte.</p></div>
+    <div class="tl-item gold"><div class="tl-year">Estate–autunno 1940</div><h4>🟡 Battaglia d'Inghilterra</h4><p>La RAF resiste grazie ai radar. L'operazione tedesca per invadere la Gran Bretagna fallisce. Prima sconfitta di Hitler.</p></div>
+    <div class="tl-item teal"><div class="tl-year">22 giugno 1941</div><h4>🔵 Operazione Barbarossa</h4><p>Hitler invade l'URSS rompendo il patto di non aggressione. L'ARMIR italiano combatte al fianco dei Tedeschi.</p></div>
+    <div class="tl-item teal"><div class="tl-year">7 dicembre 1941</div><h4>🔵 Attacco a Pearl Harbor</h4><p>Il Giappone bombarda la base americana. Gli USA entrano in guerra. Si formano i due blocchi definitivi.</p></div>
+    <div class="tl-item green"><div class="tl-year">Ottobre–novembre 1942</div><h4>🟢 Battaglia di El Alamein</h4><p>Gli Inglesi battono le forze dell'Asse in Egitto. A maggio 1943 tutta l'Africa settentrionale è degli Alleati.</p></div>
+    <div class="tl-item green"><div class="tl-year">Febbraio 1943</div><h4>🟢 Resa tedesca a Stalingrado</h4><p>I Sovietici resistono casa per casa. La resa tedesca segna la svolta della guerra sul fronte orientale.</p></div>
+    <div class="tl-item green"><div class="tl-year">25 luglio 1943</div><h4>🟢 Arresto di Mussolini</h4><p>Il re affida il governo a Badoglio. L'8 settembre l'Italia firma l'armistizio con gli Alleati.</p></div>
+    <div class="tl-item green"><div class="tl-year">6 giugno 1944</div><h4>🟢 D-Day — Sbarco in Normandia</h4><p>Operazione Overlord: oltre 300.000 soldati alleati sbarcano sulle spiagge francesi.</p></div>
+    <div class="tl-item purple"><div class="tl-year">Febbraio 1945</div><h4>🟣 Conferenza di Yalta</h4><p>Stalin, Churchill e Roosevelt si incontrano per decidere il futuro dell'Europa dopo la guerra.</p></div>
+    <div class="tl-item purple"><div class="tl-year">25 aprile 1945</div><h4>🟣 Fine della guerra in Europa</h4><p>Le truppe alleate si ricongiungono sul fiume Elba. La Germania firma la resa incondizionata. Hitler si suicida.</p></div>
+    <div class="tl-item red"><div class="tl-year">6–9 agosto 1945</div><h4>🔴 Bombe atomiche su Hiroshima e Nagasaki</h4><p>Le due città vengono distrutte. Il 14 agosto il Giappone si arrende. Fine della Seconda Guerra Mondiale.</p></div>
+    <div class="tl-item teal"><div class="tl-year">20 novembre 1945</div><h4>🔵 Processi di Norimberga</h4><p>I gerarchi nazisti vengono processati. Dopo quasi un anno: 12 condanne a morte, 3 ergastoli.</p></div>
+  </div>
+</div>
+
+<!-- SCHIERAMENTI -->
+<div id="section-schieramenti" class="section">
+  <h2 class="section-title">Gli schieramenti</h2>
+  <p class="section-sub">Chi combatteva con chi.</p>
+  <div class="sides-grid">
+    <div class="side-card axis">
+      <h3>⚫ L'Asse</h3>
+      <ul>
+        <li><span class="dot"></span>Germania — guida del blocco, Adolf Hitler</li>
+        <li><span class="dot"></span>Italia — Mussolini, entra il 10/6/1940</li>
+        <li><span class="dot"></span>Giappone — attacca Pearl Harbor 7/12/1941</li>
+        <li><span class="dot"></span>Ungheria, Romania, Bulgaria</li>
+        <li><span class="dot"></span>Francia di Vichy (collaborazionismo)</li>
+      </ul>
+    </div>
+    <div class="side-card allied">
+      <h3>🔵 Gli Alleati</h3>
+      <ul>
+        <li><span class="dot"></span>Gran Bretagna — Winston Churchill</li>
+        <li><span class="dot"></span>URSS — Joseph Stalin (dal 1941)</li>
+        <li><span class="dot"></span>USA — Roosevelt (dal dicembre 1941)</li>
+        <li><span class="dot"></span>Francia Libera — generale De Gaulle</li>
+        <li><span class="dot"></span>Polonia, Grecia, Norvegia (in esilio)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="neutral-card">
+    <h3>⬜ Paesi neutrali</h3>
+    <p>Svezia, Svizzera, Spagna e Portogallo rimangono neutrali e non vengono invasi.</p>
+  </div>
+  <div class="topic-card red" style="margin-top:16px; cursor:default; border-left-color:var(--red)">
+    <div class="date">🇮🇹 Il percorso dell'Italia</div>
+    <h3>Da non belligerante a cobelligerante</h3>
+    <p>L'Italia inizia come <strong>non belligerante</strong>: non è neutrale, ma non combatte, perché l'esercito è impreparato. Entra in guerra il 10 giugno 1940 con l'Asse. Dopo l'armistizio dell'<strong>8 settembre 1943</strong> il Paese si divide: il Sud combatte con gli Alleati, il Nord è occupato dai Tedeschi che fondano la Repubblica Sociale Italiana (RSI) e liberano Mussolini.</p>
+  </div>
+</div>
+
+<!-- SHOAH -->
+<div id="section-shoah" class="section">
+  <h2 class="section-title">La Shoah</h2>
+  <p class="section-sub">Lo sterminio degli Ebrei e degli altri gruppi perseguitati dai nazisti.</p>
+
+  <div class="shoah-banner">
+    <h3>Che cos'è la Shoah</h3>
+    <p><strong>Shoah</strong> è una parola ebraica che significa <em>"catastrofe"</em> o <em>"distruzione"</em>. Indica lo sterminio sistematico degli Ebrei messo in atto dai nazisti. Vengono perseguitati anche Rom, Sinti, omosessuali e persone con disabilità, considerati "razze inferiori" dall'ideologia nazista.</p>
+    <div class="shoah-stats">
+      <div class="stat-box"><span class="num">~6 mln</span><div class="lab">Ebrei uccisi</div></div>
+      <div class="stat-box"><span class="num">+1 mln</span><div class="lab">Morti ad Auschwitz-Birkenau</div></div>
+      <div class="stat-box"><span class="num">27 gen</span><div class="lab">Giorno della Memoria</div></div>
+    </div>
+  </div>
+
+  <div class="map-grid">
+    <div class="topic-card red" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔴 Prima fase</div>
+      <h3>I ghetti</h3>
+      <p>Gli Ebrei vengono rinchiusi in quartieri sorvegliati chiamati ghetti, in attesa della deportazione.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Le condizioni nei ghetti sono disumane: sovraffollamento, fame, malattie. Avvengono frequenti fucilazioni di massa. È una soluzione "temporanea" in attesa della deportazione nei campi.</div>
+    </div>
+    <div class="topic-card red" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔴 Seconda fase</div>
+      <h3>I campi di concentramento (Lager)</h3>
+      <p>I prigionieri indossano triangoli di colore diverso in base alla categoria. A ognuno viene assegnato un numero tatuato sul braccio.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">I triangoli hanno colori diversi: giallo per gli Ebrei, rosa per gli omosessuali, rosso per i prigionieri politici. Il numero di matricola è spesso tatuato sull'avambraccio, togliendo alle persone anche il nome.</div>
+    </div>
+    <div class="topic-card red" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🔴 Fase finale</div>
+      <h3>La "soluzione finale"</h3>
+      <p>Dal 1941 nascono i campi di sterminio, progettati per uccidere il maggior numero di persone. Il più grande è Auschwitz-Birkenau.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">L'obiettivo dei nazisti è l'annientamento totale del popolo ebraico. Ad Auschwitz-Birkenau vengono uccise oltre un milione di persone attraverso le camere a gas.</div>
+    </div>
+    <div class="topic-card gold" onclick="toggleExpand(this)" tabindex="0">
+      <div class="date">🟡 1945 — oggi</div>
+      <h3>La memoria</h3>
+      <p>Alla liberazione dei campi il mondo scopre l'orrore. Il 27 gennaio è il Giorno della Memoria in tutto il mondo.</p>
+      <p class="expand-hint">👆 Tocca per saperne di più</p>
+      <div class="extra">Il 27 gennaio 1945 i soldati sovietici liberano Auschwitz. Da allora il 27 gennaio è il Giorno della Memoria. I processi di Norimberga condannano i principali responsabili dello sterminio.</div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOSSARIO -->
+<div id="section-glossario" class="section">
+  <h2 class="section-title">Glossario</h2>
+  <p class="section-sub">Le parole difficili spiegate in modo semplice.</p>
+  <div class="glossary-grid">
+    <div class="gloss-card"><h4>Corridoio polacco</h4><p>Una striscia di terra assegnata alla Polonia nel 1919 per darle accesso al mare. Divideva la Germania in due parti.</p></div>
+    <div class="gloss-card"><h4>Guerra lampo (Blitzkrieg)</h4><p>Tattica di guerra tedesca: attacchi rapidissimi con carri armati e aerei per travolgere il nemico prima che possa difendersi.</p></div>
+    <div class="gloss-card"><h4>Non belligeranza</h4><p>Uno Stato che non è neutrale, ma sceglie di non combattere. L'Italia era in questa posizione all'inizio della guerra.</p></div>
+    <div class="gloss-card"><h4>Collaborazionismo</h4><p>Quando un governo o delle persone aiutano il nemico che ha occupato il loro Paese. Il governo di Vichy è l'esempio principale.</p></div>
+    <div class="gloss-card"><h4>Radar</h4><p>Strumento che usa onde radio per individuare aerei o navi lontane. Permise alla Gran Bretagna di difendersi dai bombardamenti tedeschi.</p></div>
+    <div class="gloss-card"><h4>Patto Molotov-Ribbentrop</h4><p>Accordo di non aggressione tra Germania e URSS (1939). Hitler lo ruppe nel 1941 con l'Operazione Barbarossa.</p></div>
+    <div class="gloss-card"><h4>ARMIR</h4><p>Armata Italiana in Russia. I soldati italiani che combatterono sul fronte orientale. Subì enormi perdite durante la ritirata del 1943.</p></div>
+    <div class="gloss-card"><h4>Shoah</h4><p>Parola ebraica che significa "catastrofe". Indica lo sterminio di circa sei milioni di Ebrei da parte dei nazisti.</p></div>
+    <div class="gloss-card"><h4>Ghetto</h4><p>Quartiere recintato e sorvegliato dove gli Ebrei venivano rinchiusi in attesa di essere deportati nei campi.</p></div>
+    <div class="gloss-card"><h4>Lager</h4><p>Parola tedesca per "campo". I nazisti vi rinchiudevano gli oppositori, gli Ebrei e altri perseguitati.</p></div>
+    <div class="gloss-card"><h4>D-Day (Overlord)</h4><p>Il 6 giugno 1944 oltre 300.000 soldati alleati sbarcarono sulle spiagge della Normandia, in Francia.</p></div>
+    <div class="gloss-card"><h4>Resa incondizionata</h4><p>Arrendersi senza poter porre condizioni. La Germania la firmò il 7 maggio 1945, il Giappone il 2 settembre 1945.</p></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="section-quiz" class="section">
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <h2 class="section-title" style="margin-bottom:0">Verifica</h2>
+      <span class="quiz-progress" id="quiz-progress">Domanda 1 / 12</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:4%"></div></div>
+    <div id="quiz-area"></div>
+    <div class="score-box" id="score-box">
+      <p class="score-label-top">Il tuo punteggio</p>
+      <div class="score-number" id="score-number">0</div>
+      <p class="score-label">risposte corrette su 12</p>
+      <p class="score-message" id="score-message"></p>
+      <button class="btn" onclick="resetQuiz()">🔁 Riprova</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'quiz' && !document.getElementById('quiz-area').innerHTML) renderQuestion();
+}
+
+function toggleExpand(card) {
+  const extra = card.querySelector('.extra');
+  const hint  = card.querySelector('.expand-hint');
+  if (!extra) return;
+  const open = extra.style.display === 'block';
+  extra.style.display = open ? 'none' : 'block';
+  if (hint) hint.textContent = open ? '👆 Tocca per saperne di più' : '👆 Tocca per chiudere';
+}
+
+const questions = [
+  { q:"Quando la Germania invase la Polonia, dando inizio alla Seconda Guerra Mondiale?", options:["1° settembre 1939","3 settembre 1939","10 maggio 1940","22 giugno 1941"], correct:0, feedback:"Esatto! Il 1° settembre 1939 le truppe tedesche invasero la Polonia senza dichiarazione di guerra. Due giorni dopo Gran Bretagna e Francia dichiararono guerra alla Germania." },
+  { q:"Cos'era il governo di Vichy?", options:["Un governo che resisteva ai nazisti da Londra","Un governo collaborazionista guidato da Pétain","Il governo militare tedesco in Francia","Il governo provvisorio del Belgio"], correct:1, feedback:"Corretto! Il governo di Vichy era un regime collaborazionista nel Centro-Sud della Francia. La 'Francia Libera' di De Gaulle si opponeva a Vichy operando da Londra." },
+  { q:"Cosa permise alla Gran Bretagna di resistere all'attacco aereo tedesco?", options:["La superiorità numerica dei piloti","L'aiuto immediato degli USA","L'introduzione dei radar","La resa delle forze italiane"], correct:2, feedback:"Giusto! I radar permettevano di individuare i bombardieri nemici in avvicinamento, dando alla RAF il tempo di intercettarli. Questo fu decisivo per la vittoria britannica." },
+  { q:"Perché l'Italia scelse la non belligeranza all'inizio della guerra?", options:["Era alleata della Gran Bretagna","Aveva un esercito male armato e poco preparato","Mussolini era contrario a Hitler","Aveva accordi di neutralità internazionale"], correct:1, feedback:"Esatto! Nonostante il Patto d'Acciaio con la Germania, l'Italia scelse la non belligeranza perché il suo esercito era impreparato. Mussolini entrò in guerra solo quando credeva certa la vittoria tedesca." },
+  { q:"Cos'era l'Operazione Barbarossa?", options:["Lo sbarco alleato in Sicilia","L'invasione tedesca della Gran Bretagna","L'invasione tedesca dell'Unione Sovietica","Il piano di difesa della Polonia"], correct:2, feedback:"Corretto! L'Operazione Barbarossa iniziò il 22 giugno 1941, quando Hitler ruppe il patto con Stalin e invase l'URSS. Fu il più grande attacco militare della storia." },
+  { q:"Perché gli Stati Uniti entrarono in guerra nel dicembre 1941?", options:["La Germania dichiarò guerra agli USA","Il Giappone bombardò Pearl Harbor","L'Italia dichiarò guerra agli USA","La Gran Bretagna chiese aiuto militare formale"], correct:1, feedback:"Esatto! Il 7 dicembre 1941 il Giappone bombardò senza dichiarazione di guerra la base navale americana di Pearl Harbor nelle Hawaii." },
+  { q:"Cosa significa la parola 'Shoah'?", options:["Guerra totale","Catastrofe o distruzione","Soluzione finale","Deportazione"], correct:1, feedback:"Corretto! 'Shoah' è una parola ebraica che significa 'catastrofe' o 'distruzione'. Indica lo sterminio di circa sei milioni di Ebrei da parte dei nazisti." },
+  { q:"Qual era l'obiettivo della 'soluzione finale' nazista?", options:["Deportare gli Ebrei in Palestina","Trasferirli in campi di lavoro","L'annientamento totale del popolo ebraico","Espellere gli Ebrei dai territori tedeschi"], correct:2, feedback:"Esatto. La 'soluzione finale' era il piano per l'annientamento fisico totale del popolo ebraico, realizzato nei campi di sterminio come Auschwitz-Birkenau." },
+  { q:"Dove avvenne la battaglia che segnò la svolta sul fronte orientale?", options:["Mosca","Leningrado","Berlino","Stalingrado"], correct:3, feedback:"Esatto! A Stalingrado i Sovietici combatterono casa per casa. La resa tedesca nel febbraio 1943 segnò la grande svolta della guerra." },
+  { q:"Quando Mussolini fu arrestato?", options:["8 settembre 1943","25 luglio 1943","10 giugno 1943","25 aprile 1945"], correct:1, feedback:"Corretto! Il 25 luglio 1943 Mussolini fu destituito e arrestato. L'8 settembre l'Italia firmò l'armistizio con gli Alleati." },
+  { q:"Cos'era l'Operazione Overlord (D-Day)?", options:["L'invasione italiana della Grecia","Lo sbarco alleato in Normandia il 6 giugno 1944","L'attacco tedesco alla linea Maginot","L'offensiva sovietica a Stalingrado"], correct:1, feedback:"Esatto! Il D-Day vide oltre 300.000 soldati alleati sbarcare sulle spiagge della Normandia. Fu la più grande operazione anfibia della storia." },
+  { q:"Quante condanne a morte emisero i Processi di Norimberga?", options:["6","8","12","20"], correct:2, feedback:"Corretto! Il tribunale emise 12 condanne a morte per impiccagione, 3 ergastoli e condanne tra i 10 e i 20 anni per gli altri imputati." }
+];
+
+let current = 0, score = 0;
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = Math.round(((current) / questions.length) * 100);
+  document.getElementById('progress-fill').style.width = Math.max(pct, 2) + '%';
+  document.getElementById('quiz-progress').textContent = `Domanda ${current + 1} / ${questions.length}`;
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="question-card">
+      <div class="question-num">Domanda ${current + 1}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+        ${q.options.map((opt, i) => `<button class="option-btn" onclick="selectAnswer(${i})">${opt}</button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="quiz-nav">
+      <span style="font-size:1rem; color:var(--text2)">✅ ${score} corrette finora</span>
+      <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>${current === questions.length - 1 ? 'Vedi risultati' : 'Avanti →'}</button>
+    </div>
+  `;
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.correct) {
+    score++;
+    document.querySelectorAll('.option-btn')[idx].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.innerHTML = '✅ ' + q.feedback;
+  } else {
+    document.querySelectorAll('.option-btn')[idx].classList.add('wrong');
+    document.querySelectorAll('.option-btn')[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong show';
+    fb.innerHTML = '❌ Risposta non corretta. ' + q.feedback;
+  }
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResults(); return; }
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-area').innerHTML = '';
+  document.getElementById('score-box').classList.add('show');
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('quiz-progress').textContent = 'Completato!';
+  const n = document.getElementById('score-number');
+  n.textContent = score;
+  const pct = Math.round((score / questions.length) * 100);
+  let msg, col;
+  if (pct >= 90)      { msg = "Ottimo lavoro! Conosci molto bene gli eventi della Seconda Guerra Mondiale. 🏆"; col = 'var(--green)'; }
+  else if (pct >= 70) { msg = "Buon risultato! Rileggi le schede dove hai sbagliato e sarai pronto."; col = 'var(--teal)'; }
+  else if (pct >= 50) { msg = "Ci siamo quasi. Torna alla mappa tematica e alla cronologia, poi riprova."; col = 'var(--gold)'; }
+  else                { msg = "Hai bisogno di ripassare. Rileggi la mappa e il glossario con calma, poi riprova."; col = 'var(--red)'; }
+  n.style.color = col;
+  document.getElementById('score-message').textContent = msg;
+}
+
+function resetQuiz() {
+  current = 0; score = 0;
+  document.getElementById('score-box').classList.remove('show');
+  renderQuestion();
+}
+</script>
+</body>
+</html>
